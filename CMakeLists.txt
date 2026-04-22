@@ -36,8 +36,11 @@ set(zip_xx_source
 	source/detail/crc.h
 	source/detail/deflate.h
 	source/detail/endian.h
+	source/detail/entry_record.h
 	source/detail/level_map.h
+	source/detail/records.h
 	source/detail/timestamps.h
+	source/detail/records.cpp
 )
 
 set(zip_xx_headers
