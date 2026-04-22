@@ -29,7 +29,8 @@ include(GNUInstallDirs)
 
 # files
 set(zip_xx_source
-	source/zip-xx.cpp
+	source/zip_streambuf.cpp
+	source/zip_ostream.cpp
 )
 
 set(zip_xx_headers
