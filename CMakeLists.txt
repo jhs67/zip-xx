@@ -18,7 +18,7 @@ option(ZIP_XX_BuildTests "Build the unit tests when BUILD_TESTING is enabled." O
 option(ZIP_XX_WarnAsError "Build the code and tests with warnings as errors." ON)
 
 # dependencies
-#find_package(ZLIB REQUIRED)
+find_package(ZLIB REQUIRED)
 
 # Configuration
 set(ZIP_XX_TARGET_NAME ${PROJECT_NAME})
@@ -31,6 +31,13 @@ include(GNUInstallDirs)
 set(zip_xx_source
 	source/zip_streambuf.cpp
 	source/zip_ostream.cpp
+	source/detail/deflate.cpp
+	source/detail/constants.h
+	source/detail/crc.h
+	source/detail/deflate.h
+	source/detail/endian.h
+	source/detail/level_map.h
+	source/detail/timestamps.h
 )
 
 set(zip_xx_headers
@@ -47,6 +54,8 @@ target_include_directories(
 	$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+
+target_link_libraries(${ZIP_XX_TARGET_NAME} PRIVATE ZLIB::ZLIB)
 
 target_clang_format(${ZIP_XX_TARGET_NAME})
 
