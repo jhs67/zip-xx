@@ -1,0 +1,9 @@
+
+#include <catch2/catch_template_test_macros.hpp>
+#include "zip-xx/zip-xx.h"
+
+TEST_CASE("empty") {
+	SECTION("placeholder") {
+		REQUIRE(true);
+	}
+}

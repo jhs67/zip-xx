@@ -1,0 +1,36 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "Default Config",
+            "description": "Default build using Ninja multi-config generator",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/default"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "Debug",
+            "configurePreset": "default",
+            "configuration": "Debug"
+        },
+        {
+            "name": "Release",
+            "configurePreset": "default",
+            "configuration": "Release"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "Debug",
+            "configurePreset": "default",
+            "configuration": "Debug"
+	},
+        {
+            "name": "Release",
+            "configurePreset": "default",
+            "configuration": "Release"
+	}
+    ]
+}

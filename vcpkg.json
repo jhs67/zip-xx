@@ -1,0 +1,8 @@
+{
+    "name": "zip-xx",
+    "version-string": "0.1.0",
+    "dependencies": [
+        "catch2",
+        "zlib"
+    ]
+}
