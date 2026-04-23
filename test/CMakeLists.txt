@@ -12,6 +12,7 @@ enable_testing()
 
 set(ZIP_XX_TEST_SRC
 	unit-ostream.cpp
+	unit-reader.cpp
 )
 
 add_executable(${PROJECT_NAME} ${ZIP_XX_TEST_SRC})
