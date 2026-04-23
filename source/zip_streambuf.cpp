@@ -1,5 +1,6 @@
 #include "zip-xx/zip-xx.h"
 #include "detail/constants.h"
+#include <array>
 #include "detail/crc.h"
 #include "detail/deflate.h"
 #include "detail/entry_record.h"
@@ -16,6 +17,7 @@ namespace zip_xx {
 		explicit impl(std::streambuf *sb) : backing(sb) {}
 
 		std::streambuf *backing;
+		std::array<char, 64 * 1024> write_buf;
 		std::uint64_t current_offset = 0;
 		bool closed = false;
 		bool active = false;
@@ -32,7 +34,9 @@ namespace zip_xx {
 
 	zip_streambuf::zip_streambuf(std::ostream &o) : zip_streambuf(o.rdbuf()) {}
 
-	zip_streambuf::zip_streambuf(std::streambuf *sb) : p_(std::make_unique<impl>(sb)) {}
+	zip_streambuf::zip_streambuf(std::streambuf *sb) : p_(std::make_unique<impl>(sb)) {
+		setp(p_->write_buf.data(), p_->write_buf.data() + p_->write_buf.size());
+	}
 
 	zip_streambuf::~zip_streambuf() = default;
 
@@ -65,6 +69,7 @@ namespace zip_xx {
 			p_->deflater.emplace(detail::to_zlib_level(level));
 
 		p_->current_offset += detail::write_local_header(p_->backing, p_->current_entry);
+		setp(pbase(), epptr());
 		p_->active = true;
 		return *this;
 	}
@@ -74,6 +79,8 @@ namespace zip_xx {
 			throw std::logic_error("zip_streambuf: end_entry called with no active entry");
 		if (p_->closed)
 			throw std::logic_error("zip_streambuf: end_entry called on closed archive");
+
+		flush_put_buffer();
 
 		if (p_->deflater) {
 			auto final_bytes = p_->deflater->compress(nullptr, 0, p_->backing, true);
@@ -175,11 +182,25 @@ namespace zip_xx {
 		return n;
 	}
 
+	void zip_streambuf::flush_put_buffer() {
+		if (pptr() > pbase()) {
+			xsputn(pbase(), pptr() - pbase());
+			setp(pbase(), epptr());
+		}
+	}
+
 	zip_streambuf::int_type zip_streambuf::overflow(int_type c) {
-		if (c == traits_type::eof())
-			return traits_type::eof();
-		char_type ch = traits_type::to_char_type(c);
-		return xsputn(&ch, 1) == 1 ? c : traits_type::eof();
+		flush_put_buffer();
+		if (c != traits_type::eof()) {
+			*pptr() = traits_type::to_char_type(c);
+			pbump(1);
+		}
+		return traits_type::not_eof(c);
+	}
+
+	int zip_streambuf::sync() {
+		flush_put_buffer();
+		return p_->backing->pubsync();
 	}
 
 } // namespace zip_xx

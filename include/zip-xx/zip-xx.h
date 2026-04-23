@@ -56,8 +56,10 @@ namespace zip_xx {
 	  protected:
 		std::streamsize xsputn(const char_type *s, std::streamsize n) override;
 		int_type overflow(int_type c) override;
+		int sync() override;
 
 	  private:
+		void flush_put_buffer();
 		struct impl;
 		std::unique_ptr<impl> p_;
 	};
