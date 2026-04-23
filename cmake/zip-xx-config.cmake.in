@@ -1,0 +1,6 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+find_dependency(ZLIB)
+set_and_check(ZIP_XX_TARGETS_FILE "@PACKAGE_PATH_EXPORT_TARGETS@")
+include("${ZIP_XX_TARGETS_FILE}")
+check_required_components("@PROJECT_NAME@")

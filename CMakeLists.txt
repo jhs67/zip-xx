@@ -62,9 +62,9 @@ target_link_libraries(${ZIP_XX_TARGET_NAME} PRIVATE ZLIB::ZLIB)
 
 target_clang_format(${ZIP_XX_TARGET_NAME})
 
-if(ZIP_XX_WarnAsError AND NOT MSVC)
+if(ZIP_XX_WarnAsError)
 	target_compile_options(${ZIP_XX_TARGET_NAME} PRIVATE
-		$<$<CXX_COMPILER_ID:MSVC>:/W4>
+		$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
 		$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Werror>
 	)
 endif()
@@ -79,34 +79,24 @@ endif()
 
 # Install
 
-install(TARGETS ${ZIP_XX_TARGET_NAME} EXPORT zip-xx-export)
+install(TARGETS ${ZIP_XX_TARGET_NAME}
+	EXPORT zip-xx-export
+	INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
 install(FILES ${zip_xx_headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/zip-xx")
-install(FILES cmake/zip-xx.cmake DESTINATION "${CMAKE_INSTALL_DATADIR}/zip-xx")
 
 # create a version file
 write_basic_package_version_file(
 	zip-xx-config-version.cmake
-	VERSION ${PACKAGE_VERSION}
+	VERSION ${PROJECT_VERSION}
 	COMPATIBILITY AnyNewerVersion
 )
-
-# create config template file
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/zip-xx-config.cmake.in" [=[
-@PACKAGE_INIT@
-include(CMakeFindDependencyMacro)
-if(NOT TARGET zip-xx::@PROJECT_NAME@)
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
-    find_dependency(zlib)
-    include("@PACKAGE_PATH_EXPORT_TARGETS@")
-    check_required_components("@PROJECT_NAME@")
-endif()
-]=])
 
 # create config file
 set(config_install_dir "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
 set(PATH_EXPORT_TARGETS "${config_install_dir}/zip-xx-targets.cmake")
 configure_package_config_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/zip-xx-config.cmake.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/zip-xx-config.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/zip-xx-config.cmake"
     PATH_VARS PATH_EXPORT_TARGETS
     INSTALL_DESTINATION "${config_install_dir}"
