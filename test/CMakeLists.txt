@@ -6,6 +6,7 @@
 project(zip-xx-test)
 
 find_package(Catch2 CONFIG REQUIRED)
+find_package(libzip CONFIG REQUIRED)
 
 enable_testing()
 
@@ -16,6 +17,7 @@ set(ZIP_XX_TEST_SRC
 add_executable(${PROJECT_NAME} ${ZIP_XX_TEST_SRC})
 target_link_libraries(${PROJECT_NAME} Catch2::Catch2WithMain)
 target_link_libraries(${PROJECT_NAME} ${ZIP_XX_TARGET_NAME})
+target_link_libraries(${PROJECT_NAME} libzip::zip)
 target_clang_format(${PROJECT_NAME})
 
 if(ZIP_XX_WarnAsError AND NOT MSVC)
