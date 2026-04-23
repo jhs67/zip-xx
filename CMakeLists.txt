@@ -31,12 +31,19 @@ include(GNUInstallDirs)
 set(zip_xx_source
 	source/zip_streambuf.cpp
 	source/zip_ostream.cpp
+	source/zip_archive.cpp
+	source/zip_istreambuf.cpp
+	source/zip_istream.cpp
 	source/detail/deflate.cpp
+	source/detail/inflate.cpp
+	source/detail/read_records.cpp
 	source/detail/constants.h
 	source/detail/crc.h
 	source/detail/deflate.h
 	source/detail/endian.h
 	source/detail/entry_record.h
+	source/detail/inflate.h
+	source/detail/read_records.h
 	source/detail/level_map.h
 	source/detail/records.h
 	source/detail/timestamps.h

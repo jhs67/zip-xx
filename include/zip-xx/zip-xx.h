@@ -5,8 +5,10 @@
 #include <cstdint>
 #include <iostream>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace zip_xx {
 
@@ -98,6 +100,71 @@ namespace zip_xx {
 		void set_offset(std::uint64_t);
 
 		zip_streambuf *rdbuf() const;
+	};
+
+	struct zip_entry {
+		std::string name;
+		std::uint64_t uncompressed_size = 0;
+		std::uint64_t compressed_size = 0;
+		compression_t compression = compression_t::store;
+		stamp_t timestamp = {};
+		std::string comment;
+		std::uint64_t local_header_offset = 0; // set by zip_archive; do not modify
+	};
+
+	class zip_istreambuf;
+
+	class zip_archive {
+	  public:
+		explicit zip_archive(std::istream &is);
+		explicit zip_archive(std::streambuf *sb);
+
+		zip_archive(const zip_archive &) = delete;
+		zip_archive &operator=(const zip_archive &) = delete;
+
+		std::span<const zip_entry> entries() const;
+		const zip_entry *find(std::string_view name) const;
+
+	  private:
+		std::streambuf *backing_;
+		std::vector<zip_entry> entries_;
+		friend class zip_istreambuf;
+	};
+
+	class zip_istreambuf : public std::streambuf {
+	  public:
+		zip_istreambuf(zip_archive &arc, const zip_entry &entry);
+		~zip_istreambuf();
+
+		zip_istreambuf(const zip_istreambuf &) = delete;
+		zip_istreambuf &operator=(const zip_istreambuf &) = delete;
+
+	  protected:
+		int_type underflow() override;
+		std::streamsize xsgetn(char_type *s, std::streamsize n) override;
+		pos_type seekoff(off_type off, std::ios_base::seekdir way,
+			std::ios_base::openmode which) override;
+		pos_type seekpos(pos_type sp, std::ios_base::openmode which) override;
+
+	  private:
+		void discard(std::uint64_t n);
+
+		struct impl;
+		std::unique_ptr<impl> p_;
+	};
+
+	class zip_istream : public std::istream {
+	  public:
+		zip_istream();
+		zip_istream(zip_archive &arc, const zip_entry &entry);
+		~zip_istream();
+
+		void open(zip_archive &arc, const zip_entry &entry);
+
+		zip_istreambuf *rdbuf() const;
+
+	  private:
+		std::unique_ptr<zip_istreambuf> buf_;
 	};
 
 } // namespace zip_xx
