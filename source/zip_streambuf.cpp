@@ -38,7 +38,16 @@ namespace zip_xx {
 		setp(p_->write_buf.data(), p_->write_buf.data() + p_->write_buf.size());
 	}
 
-	zip_streambuf::~zip_streambuf() = default;
+	zip_streambuf::~zip_streambuf() {
+		if (!p_->closed) {
+			try {
+				close();
+			} catch (...) {
+				// Suppress: destructors must not throw.
+				// Call close() explicitly to detect errors.
+			}
+		}
+	}
 
 	zip_streambuf &zip_streambuf::begin_entry(std::string name, std::string comment, stamp_t stamp,
 		compression_t compression, level_t level) {
