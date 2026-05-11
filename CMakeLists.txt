@@ -4,8 +4,10 @@
 cmake_minimum_required(VERSION 3.21)
 
 # use pkgxx for dependencies
-set(VCPKG_INSTALL_OPTIONS --no-print-usage)
-include("cmake/pkgxx.cmake" OPTIONAL)
+if(NOT VCPKG_TOOLCHAIN)
+	set(VCPKG_INSTALL_OPTIONS --no-print-usage)
+	include("cmake/pkgxx.cmake" OPTIONAL)
+endif()
 
 # keep the code pretty
 include("cmake/clang-format.cmake")
