@@ -7,6 +7,16 @@
             "description": "Default build using Ninja multi-config generator",
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/default"
+        },
+        {
+            "name": "shared",
+            "displayName": "Shared Library Config",
+            "description": "Build as a shared library",
+            "inherits": "default",
+            "binaryDir": "${sourceDir}/build/shared",
+            "cacheVariables": {
+                "BUILD_SHARED_LIBS": "ON"
+            }
         }
     ],
     "buildPresets": [
