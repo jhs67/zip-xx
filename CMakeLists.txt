@@ -3,8 +3,13 @@
 #
 cmake_minimum_required(VERSION 3.21)
 
+# Options
+option(ZIP_XX_UsePkgXX "Use pkgxx to install vcpkg dependencies." ON)
+option(ZIP_XX_BuildTests "Build the unit tests when BUILD_TESTING is enabled." ON)
+option(ZIP_XX_WarnAsError "Build the code and tests with warnings as errors." ON)
+
 # use pkgxx for dependencies
-if(NOT VCPKG_TOOLCHAIN)
+if(ZIP_XX_UsePkgXX)
 	set(VCPKG_INSTALL_OPTIONS --no-print-usage)
 	include("cmake/pkgxx.cmake" OPTIONAL)
 endif()
@@ -14,10 +19,6 @@ include("cmake/clang-format.cmake")
 
 # project definition
 project(zip-xx VERSION 0.1.0)
-
-# Options
-option(ZIP_XX_BuildTests "Build the unit tests when BUILD_TESTING is enabled." ON)
-option(ZIP_XX_WarnAsError "Build the code and tests with warnings as errors." ON)
 
 # dependencies
 find_package(ZLIB REQUIRED)
