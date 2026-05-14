@@ -60,11 +60,6 @@ set(zip_xx_headers
 # Target
 add_library(${ZIP_XX_TARGET_NAME})
 
-include(GenerateExportHeader)
-generate_export_header(${ZIP_XX_TARGET_NAME}
-	BASE_NAME ZIP_XX
-)
-
 target_sources(
 	${ZIP_XX_TARGET_NAME}
 	PRIVATE ${zip_xx_source}
@@ -80,16 +75,10 @@ target_include_directories(
 	${ZIP_XX_TARGET_NAME}
 	PUBLIC
 	$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_link_libraries(${ZIP_XX_TARGET_NAME} PRIVATE ZLIB::ZLIB)
-
-set_target_properties(${ZIP_XX_TARGET_NAME} PROPERTIES
-	VERSION   ${PROJECT_VERSION}
-	SOVERSION ${PROJECT_VERSION_MAJOR}
-)
 
 target_clang_format(${ZIP_XX_TARGET_NAME})
 
@@ -115,9 +104,6 @@ install(TARGETS ${ZIP_XX_TARGET_NAME}
 	FILE_SET HEADERS
 		DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 	INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/zip_xx_export.h"
-	DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/zip-xx"
 )
 
 # create a version file

@@ -10,8 +10,6 @@
 #include <string_view>
 #include <vector>
 
-#include "zip_xx_export.h"
-
 namespace zip_xx {
 
 	using stamp_t = std::chrono::time_point<std::chrono::system_clock>;
@@ -29,7 +27,7 @@ namespace zip_xx {
 		maximum,
 	};
 
-	class ZIP_XX_EXPORT zip_streambuf : public std::streambuf {
+	class zip_streambuf : public std::streambuf {
 	  public:
 		explicit zip_streambuf(std::ostream &o);
 		explicit zip_streambuf(std::streambuf *sb);
@@ -70,14 +68,14 @@ namespace zip_xx {
 
 	namespace detail {
 
-		struct ZIP_XX_EXPORT zip_ostream_base {
+		struct zip_ostream_base {
 			zip_streambuf buf_;
 			explicit zip_ostream_base(std::streambuf *sb) : buf_(sb) {}
 		};
 
 	} // namespace detail
 
-	class ZIP_XX_EXPORT zip_ostream : private detail::zip_ostream_base, public std::ostream {
+	class zip_ostream : private detail::zip_ostream_base, public std::ostream {
 	  public:
 		explicit zip_ostream(std::ostream &o);
 		explicit zip_ostream(std::streambuf *sb);
@@ -104,7 +102,7 @@ namespace zip_xx {
 		zip_streambuf *rdbuf() const;
 	};
 
-	struct ZIP_XX_EXPORT zip_entry {
+	struct zip_entry {
 		std::string name;
 		std::uint64_t uncompressed_size = 0;
 		std::uint64_t compressed_size = 0;
@@ -116,7 +114,7 @@ namespace zip_xx {
 
 	class zip_istreambuf;
 
-	class ZIP_XX_EXPORT zip_archive {
+	class zip_archive {
 	  public:
 		explicit zip_archive(std::istream &is);
 		explicit zip_archive(std::streambuf *sb);
@@ -133,7 +131,7 @@ namespace zip_xx {
 		friend class zip_istreambuf;
 	};
 
-	class ZIP_XX_EXPORT zip_istreambuf : public std::streambuf {
+	class zip_istreambuf : public std::streambuf {
 	  public:
 		zip_istreambuf(zip_archive &arc, const zip_entry &entry);
 		~zip_istreambuf();
@@ -155,7 +153,7 @@ namespace zip_xx {
 		std::unique_ptr<impl> p_;
 	};
 
-	class ZIP_XX_EXPORT zip_istream : public std::istream {
+	class zip_istream : public std::istream {
 	  public:
 		zip_istream();
 		zip_istream(zip_archive &arc, const zip_entry &entry);
