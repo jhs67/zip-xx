@@ -10,7 +10,7 @@ namespace zip_xx {
 		backing_->pubseekpos(
 			static_cast<std::streampos>(static_cast<std::streamoff>(info.central_dir_offset)),
 			std::ios_base::in);
-		entries_.reserve(info.entry_count);
+		entries_.reserve(static_cast<std::size_t>(info.entry_count));
 		for (std::uint64_t i = 0; i < info.entry_count; ++i)
 			entries_.push_back(detail::parse_central_dir_entry(backing_));
 	}

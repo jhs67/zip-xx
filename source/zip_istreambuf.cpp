@@ -86,7 +86,8 @@ namespace zip_xx {
 
 		auto [consumed, produced] =
 			p_->inflater->decompress(reinterpret_cast<const std::byte *>(p_->compressed_buf.data()),
-				bytes_read, reinterpret_cast<std::byte *>(p_->get_buf.data()), p_->get_buf.size());
+				static_cast<std::size_t>(bytes_read),
+				reinterpret_cast<std::byte *>(p_->get_buf.data()), p_->get_buf.size());
 		if (produced == 0)
 			return traits_type::eof();
 
@@ -151,8 +152,9 @@ namespace zip_xx {
 					break;
 
 				auto [consumed, produced] = p_->inflater->decompress(
-					reinterpret_cast<const std::byte *>(p_->compressed_buf.data()), bytes_read,
-					reinterpret_cast<std::byte *>(s + done), static_cast<std::size_t>(n - done));
+					reinterpret_cast<const std::byte *>(p_->compressed_buf.data()),
+					static_cast<std::size_t>(bytes_read), reinterpret_cast<std::byte *>(s + done),
+					static_cast<std::size_t>(n - done));
 
 				p_->compressed_fed += consumed;
 				p_->decompressed_pos += produced;
@@ -211,8 +213,9 @@ namespace zip_xx {
 
 				auto out_cap = std::min(n, static_cast<std::uint64_t>(sizeof(scratch)));
 				auto [consumed, produced] = p_->inflater->decompress(
-					reinterpret_cast<const std::byte *>(p_->compressed_buf.data()), bytes_read,
-					reinterpret_cast<std::byte *>(scratch), out_cap);
+					reinterpret_cast<const std::byte *>(p_->compressed_buf.data()),
+					static_cast<std::size_t>(bytes_read), reinterpret_cast<std::byte *>(scratch),
+					static_cast<std::size_t>(out_cap));
 
 				p_->compressed_fed += consumed;
 				p_->decompressed_pos += produced;
